@@ -26,9 +26,9 @@ async def cmd_help(message: Message):
     await message.answer("Help")
 
 
-@router.message(F.text == 'How r u?')
-async def cmd_how_r(message: Message):
-    await message.answer("OK!")
+@router.message(F.text == 'Каталог')
+async def cmd_catalog(message: Message):
+    await message.answer("Выберите категорию", reply_markup=kb.catalog)
 
 #
 @router.message(F.photo)
@@ -40,10 +40,11 @@ async def get_photo(message: Message):
     await message.answer_photo(photo='AgACAgIAAxkBAAIBimgm-qqj1GmgLdekXaTUBG-hdj-TAAKk6zEbCv04SQRKQggx7SRRAQADAgADeQADNgQ',
                                caption='This photo')
 
-@router.callback_query(F.data == 'catalog')
-async def catalog_handler(callback: CallbackQuery):
-    await callback.answer("Выбран каталог")
-    await callback.message.edit_text('Вы в каталоге', reply_markup=await kb.inline_colors())
+@router.callback_query(F.data == 'blue')
+async def catalog_color(callback: CallbackQuery):
+    await callback.answer("Выбран color", show_alert=True)
+    await callback.message.answer("Вы нажали blue")
+    # await callback.message.edit_text('Вы нажали blue', reply_markup=await kb.catalog)
 
 
 @router.message(Command('reg'))
@@ -56,12 +57,12 @@ async def reg_handler(message: Message, state: FSMContext):
 async def reg_numb_handler(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
     await state.set_state(Registration.number)
-    await message.answer("Введите номер телефона")
+    await message.answer("Введите номер телефона", reply_markup=kb.get_number)
 
 
-@router.message(Registration.number)
+@router.message(Registration.number, F.contact)
 async def reg_success_handler(message: Message, state: FSMContext):
-    await state.update_data(number=message.text)
+    await state.update_data(number=message.contact.phone_number)
     data = await state.get_data()
     await message.answer(f'Registration is Done.\nName: {data["name"]}\nNumber: {data["number"]}')
     await state.clear()
