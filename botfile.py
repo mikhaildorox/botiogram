@@ -4,7 +4,7 @@ import logging
 from aiogram import Bot, Dispatcher
 
 from config import TOKEN
-from app.handlers import router
+from app.handlers_shop import router
 from app.database.models import async_create_db
 
 bot = Bot(token=TOKEN)
