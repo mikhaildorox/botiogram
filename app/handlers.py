@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 
 import app.keyboards as kb
 from app.middleware import TestMiddleware
+import app.database.requests as rq
 
 router = Router()
 
@@ -17,6 +18,7 @@ class Registration(StatesGroup):
 
 @router.message(CommandStart())
 async def cmd_start(message: Message):
+    await rq.set_user(message.from_user.id)
     await message.answer(f"Hi!\nYour ID: {message.from_user.id}\nName: {message.from_user.first_name}",
                          reply_markup=kb.main)
 
